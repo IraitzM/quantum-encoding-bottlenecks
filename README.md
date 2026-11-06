@@ -16,8 +16,8 @@ is included.
 The project uses [uv](https://docs.astral.sh/uv/) and Python 3.12.
 
 ```bash
-git clone https://github.com/IraitzM/qenc
-cd qenc
+git clone https://github.com/IraitzM/quantum-encoding-bottlenecks
+cd quantum-encoding-bottlenecks
 uv sync
 ```
 

@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite the article it accompanies."
 type: software
-title: "qenc: reproduction code for How Quantum Data Encoding Constrains Representation Learning"
+title: "quantum-encoding-bottlenecks: reproduction code for How Quantum Data Encoding Constrains Representation Learning"
 version: 1.0.0
 license: MIT
-repository-code: "https://github.com/IraitzM/qenc"
+repository-code: "https://github.com/IraitzM/quantum-encoding-bottlenecks"
 authors:
   - family-names: "Montalbán"
     given-names: "Iraitz"
