@@ -1,0 +1,8 @@
+data/
+results/summary/
+results/figures/
+rerun/
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
