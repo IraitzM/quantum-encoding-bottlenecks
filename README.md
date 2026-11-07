@@ -130,8 +130,9 @@ of this repository.
 
 ## Citation
 
-If you use this code, please cite the article. `CITATION.cff` holds the reference, which will be completed once
-the article is published.
+If you use this code, please cite the article. `CITATION.cff` holds the reference; it will be completed with the
+journal, volume and DOI once the article is published. The archived release DOI will be added here once the Zenodo
+record is minted.
 
 ## Licence
 

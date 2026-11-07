@@ -1,0 +1,28 @@
+{
+  "title": "quantum-encoding-bottlenecks: reproduction code for 'How Quantum Data Encoding Constrains Representation Learning'",
+  "description": "Reproduction code for the Quantum Machine Intelligence article. Simulates angle encoding with data re-uploading, amplitude embedding and the quantum spectral model (QSM) on five classification tasks, and measures where accuracy is lost along the pipeline: in pooling, in the function class of the encoding, or in training. All simulations are noiseless and use exact expectation values.",
+  "creators": [
+    {
+      "name": "Montalbán, Iraitz",
+      "affiliation": "University of Oviedo"
+    },
+    {
+      "name": "Ranilla, José",
+      "affiliation": "University of Oviedo"
+    },
+    {
+      "name": "Combarro, Elías F.",
+      "affiliation": "University of Oviedo"
+    }
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "keywords": [
+    "quantum machine learning",
+    "quantum data encoding",
+    "quantum spectral model",
+    "reproducibility",
+    "Quantum Machine Intelligence"
+  ]
+}
