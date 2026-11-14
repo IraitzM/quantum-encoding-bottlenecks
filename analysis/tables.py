@@ -218,13 +218,25 @@ def _weighted_ba(correct, y, weights):
     return np.mean(per_class, axis=0).mean(1)
 
 
+def _test_bootstrap_weights(y, groups, rng):
+    """Resample test recordings when available, otherwise individual test examples."""
+    if groups is None:
+        return rng.multinomial(len(y), np.full(len(y), 1 / len(y)), size=N_BOOT).astype(float)
+    _, inverse = np.unique(groups, return_inverse=True)
+    n_groups = int(inverse.max()) + 1
+    selected = rng.integers(0, n_groups, (N_BOOT, n_groups))
+    counts = np.zeros((N_BOOT, n_groups), dtype=float)
+    np.add.at(counts, (np.arange(N_BOOT)[:, None], selected), 1)
+    return counts[:, inverse]
+
+
 def _ladder_bootstrap(preds, dataset, candidate, rng):
-    """Seeds resampled with replacement, then test examples within each drawn seed; all gaps paired."""
+    """Seeds, then EEG test recordings when available, otherwise test examples; every gap remains paired."""
     seeds = sorted(k for k in preds if k.startswith(dataset + "-"))
     n = len(seeds)
     pick = rng.integers(0, n, (N_BOOT, n))
     result = {}
-    for gap, (a, b) in GAPS.items():
+    for gap_index, (gap, (a, b)) in enumerate(GAPS.items()):
         point, boot = [], np.empty((n, n, N_BOOT))
         for si, s in enumerate(seeds):
             p, y = preds[s], preds[s]["yt"]
@@ -236,8 +248,14 @@ def _ladder_bootstrap(preds, dataset, candidate, rng):
 
             ca, cb, ones = correct(a), correct(b), np.ones((1, len(y)))
             point.append(_weighted_ba(ca, y, ones)[0] - _weighted_ba(cb, y, ones)[0])
+            seed = int(s.rsplit("-", 1)[1])
             for slot in range(n):
-                w = rng.multinomial(len(y), np.full(len(y), 1 / len(y)), size=N_BOOT).astype(float)
+                # Advance the established example-level stream even when recordings replace its weights. A separate
+                # recording-level stream then leaves every non-EEG interval unchanged.
+                w = _test_bootstrap_weights(y, None, rng)
+                if p.get("test_groups") is not None:
+                    local = np.random.default_rng([0, seed, gap_index, slot])
+                    w = _test_bootstrap_weights(y, p.get("test_groups"), local)
                 boot[si, slot] = _weighted_ba(ca, y, w) - _weighted_ba(cb, y, w)
         draws = boot[pick, np.arange(n)[None, :], np.arange(N_BOOT)[:, None]].mean(1)
         result[gap] = (float(np.mean(point)), *np.percentile(draws, [2.5, 97.5]))
@@ -253,6 +271,13 @@ def ladder():
     for f in folders:
         with np.load(f / "predictions.npz") as z:
             preds[f.name] = {k: z[k] for k in z.files}
+        if f.name.startswith("EEG-") and "test_groups" not in preds[f.name]:
+            # Early bundles omitted the IDs, so recover them from the frozen draw and verify its labels.
+            from qenc.protocols import five_task_data
+
+            draw = five_task_data("EEG", int(f.name.rsplit("-", 1)[1]))
+            np.testing.assert_array_equal(preds[f.name]["yt"], draw["yt"])
+            preds[f.name]["test_groups"] = draw["test_groups"]
     t = s.copy()
     t["stage"] = t.stage.where(~t.stage.str.startswith("random"), "random")
     wide = (t.groupby(["dataset", "seed", "candidate", "family", "level", "stage"]).test_bacc.mean()

@@ -93,7 +93,8 @@ def run(job):
             record("L5", f"random{k:02d}", key, kind, fit_logistic(r_fit, r_test, y, yt, cv, seed), r_fit.shape[1])
         print(job, key, "ladder done", flush=True)
     pd.DataFrame(rows).to_csv(folder / "scores.csv", index=False)
-    np.savez_compressed(folder / "predictions.npz", yt=yt, **predictions)
+    test_groups = {} if d.get("test_groups") is None else {"test_groups": d["test_groups"]}
+    np.savez_compressed(folder / "predictions.npz", yt=yt, **predictions, **test_groups)
     write_json(folder / "complete.json", dict(status="complete"))
 
 

@@ -89,6 +89,12 @@ Jobs are independent, so `--job` lets you spread an experiment over several proc
 machines. `analysis/tables.py` skips bundles that are missing, so a partial rerun still
 summarizes what it has.
 
+Ladder bootstrap intervals resample seeds and then test examples, except for EEG, where
+whole test recordings are resampled within each selected seed. Every gap uses the same
+draw at its two levels. Early result bundles did not store the EEG recording IDs, so the
+analysis reconstructs them from the frozen data draw and verifies that its labels match
+the saved predictions' labels.
+
 | Article | Experiment | Summary in `results/summary/` | Time per job on one core |
 |---|---|---|---|
 | Ladder figure, gaps of Sec. 3.1 to 3.3 | `ladder.py` (25 jobs) | `ladder_gaps.csv`, `ladder_levels.csv`, `tex/ladder_table.tex` | about 10 minutes |
@@ -130,9 +136,11 @@ of this repository.
 
 ## Citation
 
-If you use this code, please cite the article. `CITATION.cff` holds the reference; it will be completed with the
-journal, volume and DOI once the article is published. The archived release DOI will be added here once the Zenodo
-record is minted.
+If you use this code, please cite the article. `CITATION.cff` holds the reference.
+
+**Archived release DOI**: [10.5281/zenodo.24216916](https://doi.org/10.5281/zenodo.24216916) (Zenodo)
+
+The article preprint DOI is 10.5281/zenodo.24216498. Journal, volume and final DOI will be added once published.
 
 ## Licence
 
